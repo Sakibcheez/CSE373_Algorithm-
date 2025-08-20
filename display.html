@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Display DSA Questions</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css">
+</head>
+<body>
+    <header>
+        <h1>Display DSA Questions and Solutions</h1>
+    </header>
+    <main>
+        <section id="fileUploadSection">
+            <input type="file" id="fileInput" accept=".txt" />
+            <button id="loadFileButton">Load Questions</button>
+        </section>
+
+        <section id="questionsSection">
+            <h2>Uploaded Questions</h2>
+            <div id="questionsList"></div>
+        </section>
+    </main>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const loadFileButton = document.getElementById("loadFileButton");
+            const fileInput = document.getElementById("fileInput");
+            const questionsList = document.getElementById("questionsList");
+
+            loadFileButton.addEventListener("click", function () {
+                const file = fileInput.files[0];
+                if (!file) {
+                    alert("Please upload a .txt file first.");
+                    return;
+                }
+
+                // Read the content of the file
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    const fileContent = event.target.result;
+                    displayQuestions(fileContent);
+                };
+                reader.readAsText(file);
+            });
+
+            function displayQuestions(fileContent) {
+                const lines = fileContent.split("\n");
+                const questions = [];
+                let question = {};
+                let currentQuestion = "";
+
+                // Parse the file content
+                lines.forEach(line => {
+                    if (line.startsWith("Question")) {
+                        if (currentQuestion) {
+                            questions.push(question); // Push the previous question to the list
+                        }
+                        question = {}; // Reset question
+                        currentQuestion = line;
+                        question.title = line.split(":")[1].trim();
+                    } else if (line.startsWith("Description")) {
+                        question.description = line.split(":")[1].trim();
+                    } else if (line.startsWith("Language")) {
+                        question.language = line.split(":")[1].trim();
+                    } else if (line.startsWith("Solution")) {
+                        question.solution = line.split(":")[1].trim();
+                    }
+                });
+
+                // Add the last question after loop
+                if (currentQuestion) {
+                    questions.push(question);
+                }
+
+                // Clear previous content
+                questionsList.innerHTML = "";
+
+                // Display all questions
+                questions.forEach((q, index) => {
+                    const questionItem = document.createElement("div");
+                    questionItem.classList.add("question");
+
+                    const questionContent = `
+                        <h3>${q.title}</h3>
+                        <p><strong>Description:</strong> ${q.description}</p>
+                        <p><strong>Language:</strong> ${q.language}</p>
+                        <pre><code class="language-${q.language}">${q.solution}</code></pre>
+                    `;
+
+                    questionItem.innerHTML = questionContent;
+                    questionsList.appendChild(questionItem);
+
+                    // Apply syntax highlighting
+                    hljs.highlightAll();
+                });
+            }
+        });
+    </script>
+</body>
+</html>
