@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DSA Question Upload</title>
+    <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/highlight.min.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.7.0/styles/github.min.css">
+</head>
+<body>
+    <header>
+        <h1>Upload DSA Questions and Solutions</h1>
+    </header>
+    <main>
+        <section id="uploadSection">
+            <form id="uploadForm" action="javascript:void(0)">
+                <label for="questionTitle">Question Title:</label>
+                <input type="text" id="questionTitle" required placeholder="Enter question title">
+
+                <label for="questionDescription">Question Description:</label>
+                <textarea id="questionDescription" rows="5" required placeholder="Enter question description"></textarea>
+
+                <label for="codeLanguage">Select Programming Language:</label>
+                <select id="codeLanguage" required>
+                    <option value="javascript">JavaScript</option>
+                    <option value="python">Python</option>
+                    <option value="java">Java</option>
+                    <option value="c++">C++</option>
+                </select>
+
+                <label for="codeSolution">Solution Code:</label>
+                <textarea id="codeSolution" rows="10" required placeholder="Enter solution code"></textarea>
+
+                <button type="submit">Upload Question</button>
+            </form>
+        </section>
+
+        <section id="questionsSection">
+            <h2>Uploaded Questions</h2>
+            <div id="questionsList"></div>
+        </section>
+    </main>
+
+    <script src="script.js"></script>
+</body>
+</html>
