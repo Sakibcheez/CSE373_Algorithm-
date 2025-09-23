@@ -1,0 +1,1095 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NSU CSE Course Tracker</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --success-color: #27ae60;
+            --warning-color: #f39c12;
+            --danger-color: #e74c3c;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, var(--primary-color), #34495e);
+            color: white;
+            padding: 2rem 0;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        
+        .course-card {
+            background: white;
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            border-left: 4px solid var(--secondary-color);
+        }
+        
+        .course-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 15px rgba(0,0,0,0.2);
+        }
+        
+        .course-card.completed {
+            border-left-color: var(--success-color);
+            background: linear-gradient(135deg, #ffffff, #f8fff8);
+        }
+        
+        .course-checkbox {
+            width: 20px;
+            height: 20px;
+            margin-right: 15px;
+        }
+        
+        .course-code {
+            font-weight: 700;
+            color: var(--primary-color);
+            font-size: 1.1rem;
+        }
+        
+        .course-name {
+            color: #555;
+            margin: 0.5rem 0;
+        }
+        
+        .course-credits {
+            background: var(--secondary-color);
+            color: white;
+            padding: 0.25rem 0.75rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .course-type {
+            background: var(--warning-color);
+            color: white;
+            padding: 0.25rem 0.5rem;
+            border-radius: 15px;
+            font-size: 0.75rem;
+            margin-left: 0.5rem;
+        }
+        
+        .prerequisites {
+            font-size: 0.85rem;
+            color: #666;
+            margin-top: 0.5rem;
+        }
+        
+        .category-header {
+            background: linear-gradient(135deg, var(--primary-color), #34495e);
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 8px;
+            margin: 2rem 0 1rem 0;
+            font-weight: 600;
+        }
+        
+        .analysis-panel {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            position: sticky;
+            top: 20px;
+        }
+        
+        .progress-bar-custom {
+            height: 25px;
+            border-radius: 15px;
+            background: #ecf0f1;
+            overflow: hidden;
+        }
+        
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(135deg, var(--success-color), #2ecc71);
+            transition: width 0.5s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        
+        .stat-card {
+            background: linear-gradient(135deg, #ffffff, #f8f9fa);
+            border-radius: 8px;
+            padding: 1rem;
+            text-align: center;
+            margin-bottom: 1rem;
+            border: 2px solid #e9ecef;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary-color);
+        }
+        
+        .stat-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        
+        .analyze-btn {
+            background: linear-gradient(135deg, var(--success-color), #2ecc71);
+            border: none;
+            padding: 12px 30px;
+            border-radius: 25px;
+            color: white;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(39, 174, 96, 0.3);
+        }
+        
+        .analyze-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(39, 174, 96, 0.4);
+        }
+        
+        @media (max-width: 768px) {
+            .analysis-panel {
+                position: static;
+                margin-top: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <div class="container">
+            <h1 class="mb-0"><i class="fas fa-graduation-cap"></i> NSU CSE Course Tracker</h1>
+            <p class="mb-0 mt-2">Bachelor of Science in Computer Science and Engineering</p>
+        </div>
+    </div>
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-lg-8">
+                <!-- Liberal Arts Foundation -->
+                <div class="category-header">
+                    <i class="fas fa-book"></i> Liberal Arts Foundation
+                </div>
+                
+                <div class="course-card" data-category="liberal">
+                    <div class="d-flex align-items-start">
+                        <input type="checkbox" class="course-checkbox" id="eng102">
+                        <div class="flex-grow-1">
+                            <div class="course-code">ENG 102</div>
+                            <div class="course-name">Introduction to Composition</div>
+                            <div class="d-flex align-items-center">
+                                <span class="course-credits">3 Credits</span>
+                                <span class="course-type">Core</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-card" data-category="liberal">
+                    <div class="d-flex align-items-start">
+                        <input type="checkbox" class="course-checkbox" id="eng103">
+                        <div class="flex-grow-1">
+                            <div class="course-code">ENG 103</div>
+                            <div class="course-name">Intermediate Composition</div>
+                            <div class="d-flex align-items-center">
+                                <span class="course-credits">3 Credits</span>
+                                <span class="course-type">Core</span>
+                            </div>
+                            <div class="prerequisites">Prerequisites: ENG 102/Waiver</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-card" data-category="liberal">
+                    <div class="d-flex align-items-start">
+                        <input type="checkbox" class="course-checkbox" id="eng111">
+                        <div class="flex-grow-1">
+                            <div class="course-code">ENG 111</div>
+                            <div class="course-name">Public Speaking</div>
+                            <div class="d-flex align-items-center">
+                                <span class="course-credits">3 Credits</span>
+                                <span class="course-type">Core</span>
+                            </div>
+                            <div class="prerequisites">Prerequisites: ENG 103</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-card" data-category="liberal">
+                    <div class="d-flex align-items-start">
+                        <input type="checkbox" class="course-checkbox" id="phi101">
+                        <div class="flex-grow-1">
+                            <div class="course-code">PHI 101</div>
+                            <div class="course-name">Introduction to Philosophy</div>
+                            <div class="d-flex align-items-center">
+                                <span class="course-credits">3 Credits</span>
+                                <span class="course-type">Core</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-card" data-category="liberal">
+                    <div class="d-flex align-items-start">
+                        <input type="checkbox" class="course-checkbox" id="phi101">
+                        <div class="flex-grow-1">
+                            <div class="course-code">BEN 205</div>
+                            <div class="course-name">Bangla Literature</div>
+                            <div class="d-flex align-items-center">
+                                <span class="course-credits">3 Credits</span>
+                                <span class="course-type">Core</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Mathematics -->
+                <div class="category-header">
+                    <i class="fas fa-calculator"></i> Mathematics
+                </div>
+
+                <div class="course-card" data-category="math">
+                    <div class="d-flex align-items-start">
+                        <input type="checkbox" class="course-checkbox" id="mat116">
+                        <div class="flex-grow-1">
+                            <div class="course-code">MAT 116</div>
+                            <div class="course-name">Pre-Calculus</div>
+                            <div class="d-flex align-items-center">
+                                <span class="course-credits">3 Credits</span>
+                                <span class="course-type">Core</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-card" data-category="math">
+                    <div class="d-flex align-items-start">
+                        <input type="checkbox" class="course-checkbox" id="mat120">
+                        <div class="flex-grow-1">
+                            <div class="course-code">MAT 120</div>
+                            <div class="course-name">Calculus I</div>
+                            <div class="d-flex align-items-center">
+                                <span class="course-credits">3 Credits</span>
+                                <span class="course-type">Core</span>
+                            </div>
+                            <div class="prerequisites">Prerequisites: MAT 116</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-card" data-category="math">
+                    <div class="d-flex align-items-start">
+                        <input type="checkbox" class="course-checkbox" id="mat125">
+                        <div class="flex-grow-1">
+                            <div class="course-code">MAT 125</div>
+                            <div class="course-name">Linear Algebra</div>
+                            <div class="d-flex align-items-center">
+                                <span class="course-credits">3 Credits</span>
+                                <span class="course-type">Core</span>
+                            </div>
+                            <div class="prerequisites">Prerequisites: MAT 116</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-card" data-category="math">
+                    <div class="d-flex align-items-start">
+                        <input type="checkbox" class="course-checkbox" id="mat130">
+                        <div class="flex-grow-1">
+                            <div class="course-code">MAT 130</div>
+                            <div class="course-name">Calculus II</div>
+                            <div class="d-flex align-items-center">
+                                <span class="course-credits">3 Credits</span>
+                                <span class="course-type">Core</span>
+                            </div>
+                            <div class="prerequisites">Prerequisites: MAT 120</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-card" data-category="math">
+                    <div class="d-flex align-items-start">
+                        <input type="checkbox" class="course-checkbox" id="mat250">
+                        <div class="flex-grow-1">
+                            <div class="course-code">MAT 250</div>
+                            <div class="course-name">Calculus III</div>
+                            <div class="d-flex align-items-center">
+                                <span class="course-credits">3 Credits</span>
+                                <span class="course-type">Core</span>
+                            </div>
+                            <div class="prerequisites">Prerequisites: MAT 130</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-card" data-category="math">
+                    <div class="d-flex align-items-start">
+                        <input type="checkbox" class="course-checkbox" id="mat350">
+                        <div class="flex-grow-1">
+                            <div class="course-code">MAT 350</div>
+                            <div class="course-name">Engineering Mathematics</div>
+                            <div class="d-flex align-items-center">
+                                <span class="course-credits">3 Credits</span>
+                                <span class="course-type">Core</span>
+                            </div>
+                            <div class="prerequisites">Prerequisites: MAT 250</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-card" data-category="math">
+                    <div class="d-flex align-items-start">
+                        <input type="checkbox" class="course-checkbox" id="mat361">
+                        <div class="flex-grow-1">
+                            <div class="course-code">MAT 361</div>
+                            <div class="course-name">Probability and Statistics</div>
+                            <div class="d-flex align-items-center">
+                                <span class="course-credits">3 Credits</span>
+                                <span class="course-type">Core</span>
+                            </div>
+                            <div class="prerequisites">Prerequisites: MAT 250</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Science -->
+                <div class="category-header">
+                    <i class="fas fa-flask"></i> Science
+                </div>
+
+                <div class="course-card" data-category="science">
+                    <div class="d-flex align-items-start">
+                        <input type="checkbox" class="course-checkbox" id="phy107">
+                        <div class="flex-grow-1">
+                            <div class="course-code">PHY 107</div>
+                            <div class="course-name">Physics I</div>
+                            <div class="d-flex align-items-center">
+                                <span class="course-credits">4 Credits</span>
+                                <span class="course-type">Core</span>
+                            </div>
+                            <div class="prerequisites">Prerequisites: MAT 120</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-card" data-category="science">
+                    <div class="d-flex align-items-start">
+                        <input type="checkbox" class="course-checkbox" id="phy108">
+                        <div class="flex-grow-1">
+                            <div class="course-code">PHY 108</div>
+                            <div class="course-name">Physics II</div>
+                            <div class="d-flex align-items-center">
+                                <span class="course-credits">4 Credits</span>
+                                <span class="course-type">Core</span>
+                            </div>
+                            <div class="prerequisites">Prerequisites: PHY 107</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-card" data-category="science">
+                    <div class="d-flex align-items-start">
+                        <input type="checkbox" class="course-checkbox" id="che101">
+                        <div class="flex-grow-1">
+                            <div class="course-code">CHE 101</div>
+                            <div class="course-name">Chemistry I</div>
+                            <div class="d-flex align-items-center">
+                                <span class="course-credits">4 Credits</span>
+                                <span class="course-type">Core</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Core CSE Courses -->
+                <div class="category-header">
+                    <i class="fas fa-code"></i> Core Computer Science & Engineering
+                </div>
+
+                <div class="course-card" data-category="cse">
+                    <div class="d-flex align-items-start">
+                        <input type="checkbox" class="course-checkbox" id="cse115">
+                        <div class="flex-grow-1">
+                            <div class="course-code">CSE 115</div>
+                            <div class="course-name">Programming Language I</div>
+                            <div class="d-flex align-items-center">
+                                <span class="course-credits">3 Credits</span>
+                                <span class="course-type">Core</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-card" data-category="cse">
+                    <div class="d-flex align-items-start">
+                        <input type="checkbox" class="course-checkbox" id="cse115l">
+                        <div class="flex-grow-1">
+                            <div class="course-code">CSE 115L</div>
+                            <div class="course-name">Programming Language I Lab</div>
+                            <div class="d-flex align-items-center">
+                                <span class="course-credits">1 Credit</span>
+                                <span class="course-type">Lab</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-card" data-category="cse">
+                    <div class="d-flex align-items-start">
+                        <input type="checkbox" class="course-checkbox" id="cse173">
+                        <div class="flex-grow-1">
+                            <div class="course-code">CSE 173</div>
+                            <div class="course-name">Discrete Mathematics</div>
+                            <div class="d-flex align-items-center">
+                                <span class="course-credits">3 Credits</span>
+                                <span class="course-type">Core</span>
+                            </div>
+                            <div class="prerequisites">Prerequisites: CSE 115, CSE 115L</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-card" data-category="cse">
+                    <div class="d-flex align-items-start">
+                        <input type="checkbox" class="course-checkbox" id="cse215">
+                        <div class="flex-grow-1">
+                            <div class="course-code">CSE 215</div>
+                            <div class="course-name">Programming Language II</div>
+                            <div class="d-flex align-items-center">
+                                <span class="course-credits">3 Credits</span>
+                                <span class="course-type">Core</span>
+                            </div>
+                            <div class="prerequisites">Prerequisites: CSE 115</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-card" data-category="cse">
+                    <div class="d-flex align-items-start">
+                        <input type="checkbox" class="course-checkbox" id="cse215l">
+                        <div class="flex-grow-1">
+                            <div class="course-code">CSE 215L</div>
+                            <div class="course-name">Programming Language II Lab</div>
+                            <div class="d-flex align-items-center">
+                                <span class="course-credits">1 Credit</span>
+                                <span class="course-type">Lab</span>
+                            </div>
+                            <div class="prerequisites">Prerequisites: CSE 115</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-card" data-category="cse">
+                    <div class="d-flex align-items-start">
+                        <input type="checkbox" class="course-checkbox" id="cse225">
+                        <div class="flex-grow-1">
+                            <div class="course-code">CSE 225</div>
+                            <div class="course-name">Data Structures and Algorithms</div>
+                            <div class="d-flex align-items-center">
+                                <span class="course-credits">3 Credits</span>
+                                <span class="course-type">Core</span>
+                            </div>
+                            <div class="prerequisites">Prerequisites: CSE 215</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-card" data-category="cse">
+                    <div class="d-flex align-items-start">
+                        <input type="checkbox" class="course-checkbox" id="cse231">
+                        <div class="flex-grow-1">
+                            <div class="course-code">CSE 231</div>
+                            <div class="course-name">Digital Logic Design</div>
+                            <div class="d-flex align-items-center">
+                                <span class="course-credits">3 Credits</span>
+                                <span class="course-type">Core</span>
+                            </div>
+                            <div class="prerequisites">Prerequisites: CSE 173</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-card" data-category="cse">
+                    <div class="d-flex align-items-start">
+                        <input type="checkbox" class="course-checkbox" id="cse299">
+                        <div class="flex-grow-1">
+                            <div class="course-code">CSE 299</div>
+                            <div class="course-name">Junior Design Course</div>
+                            <div class="d-flex align-items-center">
+                                <span class="course-credits">1 Credit</span>
+                                <span class="course-type">Design</span>
+                            </div>
+                            <div class="prerequisites">Prerequisites: Completion of 60 credits</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-card" data-category="cse">
+                    <div class="d-flex align-items-start">
+                        <input type="checkbox" class="course-checkbox" id="cse311">
+                        <div class="flex-grow-1">
+                            <div class="course-code">CSE 311</div>
+                            <div class="course-name">Database Systems</div>
+                            <div class="d-flex align-items-center">
+                                <span class="course-credits">3 Credits</span>
+                                <span class="course-type">Core</span>
+                            </div>
+                            <div class="prerequisites">Prerequisites: CSE 225</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-card" data-category="cse">
+                    <div class="d-flex align-items-start">
+                        <input type="checkbox" class="course-checkbox" id="cse323">
+                        <div class="flex-grow-1">
+                            <div class="course-code">CSE 323</div>
+                            <div class="course-name">Operating Systems Design</div>
+                            <div class="d-flex align-items-center">
+                                <span class="course-credits">3 Credits</span>
+                                <span class="course-type">Core</span>
+                            </div>
+                            <div class="prerequisites">Prerequisites: CSE 332</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-card" data-category="cse">
+                    <div class="d-flex align-items-start">
+                        <input type="checkbox" class="course-checkbox" id="cse327">
+                        <div class="flex-grow-1">
+                            <div class="course-code">CSE 327</div>
+                            <div class="course-name">Software Engineering</div>
+                            <div class="d-flex align-items-center">
+                                <span class="course-credits">3 Credits</span>
+                                <span class="course-type">Core</span>
+                            </div>
+                            <div class="prerequisites">Prerequisites: CSE 311</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-card" data-category="cse">
+                    <div class="d-flex align-items-start">
+                        <input type="checkbox" class="course-checkbox" id="cse331">
+                        <div class="flex-grow-1">
+                            <div class="course-code">CSE 331</div>
+                            <div class="course-name">Microprocessor Interfacing & Embedded System</div>
+                            <div class="d-flex align-items-center">
+                                <span class="course-credits">3 Credits</span>
+                                <span class="course-type">Core</span>
+                            </div>
+                            <div class="prerequisites">Prerequisites: CSE 332</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-card" data-category="cse">
+                    <div class="d-flex align-items-start">
+                        <input type="checkbox" class="course-checkbox" id="cse332">
+                        <div class="flex-grow-1">
+                            <div class="course-code">CSE 332</div>
+                            <div class="course-name">Computer Organization and Architecture</div>
+                            <div class="d-flex align-items-center">
+                                <span class="course-credits">3 Credits</span>
+                                <span class="course-type">Core</span>
+                            </div>
+                            <div class="prerequisites">Prerequisites: CSE 231</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-card" data-category="cse">
+                    <div class="d-flex align-items-start">
+                        <input type="checkbox" class="course-checkbox" id="cse373">
+                        <div class="flex-grow-1">
+                            <div class="course-code">CSE 373</div>
+                            <div class="course-name">Design and Analysis of Algorithms</div>
+                            <div class="d-flex align-items-center">
+                                <span class="course-credits">3 Credits</span>
+                                <span class="course-type">Core</span>
+                            </div>
+                            <div class="prerequisites">Prerequisites: CSE 225, MAT 361</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-card" data-category="cse">
+                    <div class="d-flex align-items-start">
+                        <input type="checkbox" class="course-checkbox" id="cse325">
+                        <div class="flex-grow-1">
+                            <div class="course-code">CSE 325</div>
+                            <div class="course-name">Concepts of Programming Language</div>
+                            <div class="d-flex align-items-center">
+                                <span class="course-credits">3 Credits</span>
+                                <span class="course-type">Core</span>
+                            </div>
+                            <div class="prerequisites">Prerequisites: CSE 327</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Engineering & Others -->
+                <div class="category-header">
+                    <i class="fas fa-cog"></i> Engineering & Others
+                </div>
+
+                <div class="course-card" data-category="engineering">
+                    <div class="d-flex align-items-start">
+                        <input type="checkbox" class="course-checkbox" id="eee141">
+                        <div class="flex-grow-1">
+                            <div class="course-code">EEE 141</div>
+                            <div class="course-name">Electrical Circuits I</div>
+                            <div class="d-flex align-items-center">
+                                <span class="course-credits">3 Credits</span>
+                                <span class="course-type">Core</span>
+                            </div>
+                            <div class="prerequisites">Prerequisites: MAT 120</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-card" data-category="engineering">
+                    <div class="d-flex align-items-start">
+                        <input type="checkbox" class="course-checkbox" id="eee111">
+                        <div class="flex-grow-1">
+                            <div class="course-code">EEE 111</div>
+                            <div class="course-name">Analog Electronics-I</div>
+                            <div class="d-flex align-items-center">
+                                <span class="course-credits">3 Credits</span>
+                                <span class="course-type">Core</span>
+                            </div>
+                            <div class="prerequisites">Prerequisites: EEE 141</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-card" data-category="engineering">
+                    <div class="d-flex align-items-start">
+                        <input type="checkbox" class="course-checkbox" id="eee452">
+                        <div class="flex-grow-1">
+                            <div class="course-code">EEE 452</div>
+                            <div class="course-name">Engineering Economics</div>
+                            <div class="d-flex align-items-center">
+                                <span class="course-credits">3 Credits</span>
+                                <span class="course-type">Core</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Capstone -->
+                <div class="category-header">
+                    <i class="fas fa-trophy"></i> Capstone & Final Projects
+                </div>
+
+                <div class="course-card" data-category="capstone">
+                    <div class="d-flex align-items-start">
+                        <input type="checkbox" class="course-checkbox" id="cse498">
+                        <div class="flex-grow-1">
+                            <div class="course-code">CSE 498</div>
+                            <div class="course-name">Internship/Co-op/Directed Research</div>
+                            <div class="d-flex align-items-center">
+                                <span class="course-credits">0 Credits</span>
+                                <span class="course-type">Required</span>
+                            </div>
+                            <div class="prerequisites">Prerequisites: Completion of 80 credits</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-card" data-category="capstone">
+                    <div class="d-flex align-items-start">
+                        <input type="checkbox" class="course-checkbox" id="cse499a">
+                        <div class="flex-grow-1">
+                            <div class="course-code">CSE 499A</div>
+                            <div class="course-name">Senior Design I</div>
+                            <div class="d-flex align-items-center">
+                                <span class="course-credits">1.5 Credits</span>
+                                <span class="course-type">Capstone</span>
+                            </div>
+                            <div class="prerequisites">Prerequisites: Completion of 100 credits</div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="course-card" data-category="capstone">
+                    <div class="d-flex align-items-start">
+                        <input type="checkbox" class="course-checkbox" id="cse499b">
+                        <div class="flex-grow-1">
+                            <div class="course-code">CSE 499B</div>
+                            <div class="course-name">Senior Design II</div>
+                            <div class="d-flex align-items-center">
+                                <span class="course-credits">1.5 Credits</span>
+                                <span class="course-type">Capstone</span>
+                            </div>
+                            <div class="prerequisites">Prerequisites: CSE 499A</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-lg-4">
+                <div class="analysis-panel">
+                    <h3 class="text-center mb-4">
+                        <i class="fas fa-chart-pie"></i> Progress Analysis
+                    </h3>
+                    
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="stat-card">
+                                <div class="stat-number" id="completed-credits">0</div>
+                                <div class="stat-label">Credits Completed</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="stat-card">
+                                <div class="stat-number" id="remaining-credits">120</div>
+                                <div class="stat-label">Credits Remaining</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="stat-card">
+                                <div class="stat-number" id="completed-courses">0</div>
+                                <div class="stat-label">Courses Done</div>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="stat-card">
+                                <div class="stat-number" id="total-courses">35</div>
+                                <div class="stat-label">Total Courses</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h5>Overall Progress</h5>
+                        <div class="progress-bar-custom">
+                            <div class="progress-fill" id="overall-progress" style="width: 0%">0%</div>
+                        </div>
+                    </div>
+
+                    <div class="mb-4">
+                        <h5>Category Breakdown</h5>
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between">
+                                <span>Liberal Arts</span>
+                                <span id="liberal-progress">0/4</span>
+                            </div>
+                            <div class="progress-bar-custom" style="height: 15px;">
+                                <div class="progress-fill" id="liberal-bar" style="width: 0%; font-size: 0.7rem;">0%</div>
+                            </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between">
+                                <span>Mathematics</span>
+                                <span id="math-progress">0/7</span>
+                            </div>
+                            <div class="progress-bar-custom" style="height: 15px;">
+                                <div class="progress-fill" id="math-bar" style="width: 0%; font-size: 0.7rem;">0%</div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between">
+                                <span>Science</span>
+                                <span id="science-progress">0/3</span>
+                            </div>
+                            <div class="progress-bar-custom" style="height: 15px;">
+                                <div class="progress-fill" id="science-bar" style="width: 0%; font-size: 0.7rem;">0%</div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between">
+                                <span>CSE Core</span>
+                                <span id="cse-progress">0/18</span>
+                            </div>
+                            <div class="progress-bar-custom" style="height: 15px;">
+                                <div class="progress-fill" id="cse-bar" style="width: 0%; font-size: 0.7rem;">0%</div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between">
+                                <span>Engineering</span>
+                                <span id="engineering-progress">0/3</span>
+                            </div>
+                            <div class="progress-bar-custom" style="height: 15px;">
+                                <div class="progress-fill" id="engineering-bar" style="width: 0%; font-size: 0.7rem;">0%</div>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between">
+                                <span>Capstone</span>
+                                <span id="capstone-progress">0/3</span>
+                            </div>
+                            <div class="progress-bar-custom" style="height: 15px;">
+                                <div class="progress-fill" id="capstone-bar" style="width: 0%; font-size: 0.7rem;">0%</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button class="btn analyze-btn w-100" onclick="analyzeProgress()">
+                        <i class="fas fa-chart-line"></i> Analyze Progress
+                    </button>
+
+                    <div class="mt-4" id="recommendations" style="display: none;">
+                        <h6><i class="fas fa-lightbulb"></i> Recommendations</h6>
+                        <div id="recommendation-text" class="alert alert-info"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Course data with credits
+        const courseData = {
+            // Liberal Arts
+            'eng102': { credits: 3, category: 'liberal' },
+            'eng103': { credits: 3, category: 'liberal' },
+            'eng111': { credits: 3, category: 'liberal' },
+            'phi101': { credits: 3, category: 'liberal' },
+            'Ben205': { credits: 3, category: 'liberal' },
+            
+            // Mathematics
+            'mat116': { credits: 3, category: 'math' },
+            'mat120': { credits: 3, category: 'math' },
+            'mat125': { credits: 3, category: 'math' },
+            'mat130': { credits: 3, category: 'math' },
+            'mat250': { credits: 3, category: 'math' },
+            'mat350': { credits: 3, category: 'math' },
+            'mat361': { credits: 3, category: 'math' },
+            
+            // Science
+            'phy107': { credits: 4, category: 'science' },
+            'phy108': { credits: 4, category: 'science' },
+            'che101': { credits: 4, category: 'science' },
+            
+            // CSE Core
+            'cse115': { credits: 3, category: 'cse' },
+            'cse115l': { credits: 1, category: 'cse' },
+            'cse173': { credits: 3, category: 'cse' },
+            'cse215': { credits: 3, category: 'cse' },
+            'cse215l': { credits: 1, category: 'cse' },
+            'cse225': { credits: 3, category: 'cse' },
+            'cse231': { credits: 3, category: 'cse' },
+            'cse299': { credits: 1, category: 'cse' },
+            'cse311': { credits: 3, category: 'cse' },
+            'cse323': { credits: 3, category: 'cse' },
+            'cse327': { credits: 3, category: 'cse' },
+            'cse331': { credits: 3, category: 'cse' },
+            'cse332': { credits: 3, category: 'cse' },
+            'cse373': { credits: 3, category: 'cse' },
+            'cse325': { credits: 3, category: 'cse' },
+            
+            // Engineering
+            'eee141': { credits: 3, category: 'engineering' },
+            'eee111': { credits: 3, category: 'engineering' },
+            'eee452': { credits: 3, category: 'engineering' },
+            
+            // Capstone
+            'cse498': { credits: 0, category: 'capstone' },
+            'cse499a': { credits: 1.5, category: 'capstone' },
+            'cse499b': { credits: 1.5, category: 'capstone' }
+        };
+
+        const categoryTotals = {
+            'liberal': 4,
+            'math': 7,
+            'science': 3,
+            'cse': 15,
+            'engineering': 3,
+            'capstone': 3
+        };
+
+        // Load saved progress
+        function loadProgress() {
+            Object.keys(courseData).forEach(courseId => {
+                const saved = localStorage.getItem(courseId);
+                if (saved === 'true') {
+                    document.getElementById(courseId).checked = true;
+                    updateCourseCard(courseId, true);
+                }
+            });
+            updateProgress();
+        }
+
+        // Save progress
+        function saveProgress(courseId, completed) {
+            localStorage.setItem(courseId, completed);
+        }
+
+        // Update course card appearance
+        function updateCourseCard(courseId, completed) {
+            const card = document.getElementById(courseId).closest('.course-card');
+            if (completed) {
+                card.classList.add('completed');
+            } else {
+                card.classList.remove('completed');
+            }
+        }
+
+        // Update progress statistics
+        function updateProgress() {
+            let totalCredits = 0;
+            let completedCredits = 0;
+            let completedCourses = 0;
+            
+            const categoryStats = {
+                'liberal': { completed: 0, total: 5 },
+                'math': { completed: 0, total: 7 },
+                'science': { completed: 0, total: 3 },
+                'cse': { completed: 0, total: 15 },
+                'engineering': { completed: 0, total: 3 },
+                'capstone': { completed: 0, total: 3 }
+            };
+
+            Object.keys(courseData).forEach(courseId => {
+                const course = courseData[courseId];
+                totalCredits += course.credits;
+                
+                if (document.getElementById(courseId).checked) {
+                    completedCredits += course.credits;
+                    completedCourses++;
+                    categoryStats[course.category].completed++;
+                }
+            });
+
+            // Update main stats
+            document.getElementById('completed-credits').textContent = completedCredits;
+            document.getElementById('remaining-credits').textContent = Math.max(0, 120 - completedCredits);
+            document.getElementById('completed-courses').textContent = completedCourses;
+            
+            // Update overall progress
+            const overallPercentage = Math.round((completedCredits / 120) * 100);
+            document.getElementById('overall-progress').style.width = `${overallPercentage}%`;
+            document.getElementById('overall-progress').textContent = `${overallPercentage}%`;
+
+            // Update category progress
+            Object.keys(categoryStats).forEach(category => {
+                const stats = categoryStats[category];
+                const percentage = Math.round((stats.completed / stats.total) * 100);
+                
+                document.getElementById(`${category}-progress`).textContent = `${stats.completed}/${stats.total}`;
+                document.getElementById(`${category}-bar`).style.width = `${percentage}%`;
+                document.getElementById(`${category}-bar`).textContent = `${percentage}%`;
+            });
+        }
+
+        // Analyze progress and show recommendations
+        function analyzeProgress() {
+            let completedCredits = 0;
+            const categoryProgress = {};
+            
+            Object.keys(courseData).forEach(courseId => {
+                const course = courseData[courseId];
+                if (document.getElementById(courseId).checked) {
+                    completedCredits += course.credits;
+                }
+                
+                if (!categoryProgress[course.category]) {
+                    categoryProgress[course.category] = { completed: 0, total: categoryTotals[course.category] };
+                }
+                if (document.getElementById(courseId).checked) {
+                    categoryProgress[course.category].completed++;
+                }
+            });
+
+            let recommendations = [];
+            const completionPercentage = (completedCredits / 120) * 100;
+
+            // Generate recommendations
+            if (completionPercentage < 25) {
+                recommendations.push("🎯 Focus on foundational courses: Complete Mathematics and Programming courses first.");
+            } else if (completionPercentage < 50) {
+                recommendations.push("📈 You're making good progress! Focus on core CSE courses next.");
+            } else if (completionPercentage < 75) {
+                recommendations.push("🚀 Great progress! Start preparing for your capstone projects.");
+            } else {
+                recommendations.push("🎉 Excellent! You're in the final stretch. Focus on remaining requirements.");
+            }
+
+            // Category-specific recommendations
+            Object.keys(categoryProgress).forEach(category => {
+                const progress = categoryProgress[category];
+                if (!progress) return;
+                
+                const categoryPercentage = (progress.completed / progress.total) * 100;
+                
+                if (categoryPercentage < 50) {
+                    const categoryNames = {
+                        'liberal': 'Liberal Arts',
+                        'math': 'Mathematics',
+                        'science': 'Science',
+                        'cse': 'Computer Science',
+                        'engineering': 'Engineering',
+                        'capstone': 'Capstone Projects'
+                    };
+                    recommendations.push(`⚠️ Need attention: ${categoryNames[category]} (${progress.completed}/${progress.total} completed)`);
+                }
+            });
+
+            // Semester estimation
+            const remainingCredits = 120 - completedCredits;
+            const estimatedSemesters = Math.ceil(remainingCredits / 15); // Assuming 15 credits per semester
+            
+            if (remainingCredits > 0) {
+                recommendations.push(`📅 Estimated time to graduation: ${estimatedSemesters} semester(s) at 15 credits/semester`);
+            } else {
+                recommendations.push(`🎓 Congratulations! You have completed all required credits for graduation!`);
+            }
+
+            // Show recommendations
+            document.getElementById('recommendation-text').innerHTML = recommendations.join('<br><br>');
+            document.getElementById('recommendations').style.display = 'block';
+
+            // Smooth scroll to recommendations
+            document.getElementById('recommendations').scrollIntoView({ 
+                behavior: 'smooth',
+                block: 'nearest'
+            });
+        }
+
+        // Event listeners
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProgress();
+            
+            // Add event listeners to all checkboxes
+            Object.keys(courseData).forEach(courseId => {
+                const checkbox = document.getElementById(courseId);
+                if (checkbox) {
+                    checkbox.addEventListener('change', function() {
+                        updateCourseCard(courseId, this.checked);
+                        saveProgress(courseId, this.checked);
+                        updateProgress();
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
